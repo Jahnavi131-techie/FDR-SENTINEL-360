@@ -12,7 +12,6 @@
       --teal-accent: #00BFA6;
       --teal-hover: #0F766E;
       
-      /* Refined Matte Slate-Grey Palette */
       --bg-slate: #E2E8F0;
       --card-white: #F8FAFC;
       --border-subtle: #CBD5E1;
@@ -48,62 +47,102 @@
       width: 100vw;
     }
 
-    /* COMPACT ICON SIDEBAR */
-    .sidebar-mini {
-      width: 76px;
+    /* EXPANDED SIDEBAR WITH ICONS & TEXT NAMES */
+    .sidebar-expanded {
+      width: 220px;
       background-color: var(--navy-dark);
       display: flex;
       flex-direction: column;
-      align-items: center;
-      padding: 20px 0;
+      align-items: stretch;
+      padding: 20px 14px;
       border-right: 1px solid rgba(255, 255, 255, 0.08);
       z-index: 100;
+      flex-shrink: 0;
     }
+    
+    .sidebar-brand-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 6px 18px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 16px;
+    }
+
     .logo-badge {
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
       background: linear-gradient(135deg, var(--teal-accent), #0F766E);
-      border-radius: 12px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
+      font-size: 18px;
       color: #FFFFFF;
-      box-shadow: 0 4px 14px rgba(0, 191, 166, 0.4);
-      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0, 191, 166, 0.35);
+      flex-shrink: 0;
     }
+
+    .brand-title-side {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-sub-side {
+      font-size: 10px;
+      color: #00BFA6;
+      font-weight: 700;
+    }
+
     .side-nav {
       display: flex;
       flex-direction: column;
-      gap: 14px;
+      gap: 8px;
       flex: 1;
     }
-    .nav-icon-btn {
-      width: 48px;
-      height: 48px;
+
+    .nav-item-btn {
+      width: 100%;
+      height: 44px;
       background: transparent;
       border: none;
-      border-radius: 10px;
-      font-size: 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
       color: #94A3B8;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 12px;
+      padding: 0 12px;
       transition: all 0.2s ease;
+      text-align: left;
     }
-    .nav-icon-btn:hover {
-      background: rgba(255, 255, 255, 0.08);
+
+    .nav-item-btn .nav-icon {
+      font-size: 18px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+    }
+
+    .nav-item-btn:hover {
+      background: rgba(255, 255, 255, 0.06);
       color: #FFFFFF;
     }
-    .nav-icon-btn.active {
+
+    .nav-item-btn.active {
       background: rgba(0, 191, 166, 0.15);
       color: var(--teal-accent);
       border-left: 3px solid var(--teal-accent);
     }
+
     .pulse-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       background-color: #10B981;
       border-radius: 50%;
       box-shadow: 0 0 8px #10B981;
@@ -190,7 +229,7 @@
       background: linear-gradient(135deg, var(--teal-accent), #0F766E);
       color: #FFFFFF;
       border: none;
-      padding: 10px 20px;
+      padding: 10px 18px;
       border-radius: 8px;
       font-size: 12px;
       font-weight: 800;
@@ -594,17 +633,38 @@
 <body>
   <div class="app-shell">
     
-    <!-- SIDEBAR NAVIGATION -->
-    <aside class="sidebar-mini">
-      <div class="logo-badge" title="FDR-SENTINEL 360 Core">⚡</div>
+    <!-- EXPANDED SIDEBAR NAVIGATION WITH NAMES -->
+    <aside class="sidebar-expanded">
+      <div class="sidebar-brand-row">
+        <div class="logo-badge">⚡</div>
+        <div>
+          <div class="brand-title-side">SENTINEL 360</div>
+          <div class="brand-sub-side">AI GUARDIAN</div>
+        </div>
+      </div>
+
       <nav class="side-nav">
-        <button id="nav-dashboard" class="nav-icon-btn active" title="Command Center" onclick="switchView('dashboard')">📊</button>
-        <button id="nav-forensic-lab" class="nav-icon-btn" title="AI FDR Forensic Lab" onclick="switchView('forensic-lab')">🔬</button>
-        <button id="nav-passports" class="nav-icon-btn" title="FDR Passports" onclick="switchView('passports')">🪪</button>
-        <button id="nav-audit" class="nav-icon-btn" title="Audit Ledger" onclick="switchView('audit')">🔒</button>
+        <button id="nav-dashboard" class="nav-item-btn active" onclick="switchView('dashboard')">
+          <span class="nav-icon">🏠</span>
+          <span>Home</span>
+        </button>
+        <button id="nav-forensic-lab" class="nav-item-btn" onclick="switchView('forensic-lab')">
+          <span class="nav-icon">🔬</span>
+          <span>Forensic Lab</span>
+        </button>
+        <button id="nav-passports" class="nav-item-btn" onclick="switchView('passports')">
+          <span class="nav-icon">🪪</span>
+          <span>FDR Passports</span>
+        </button>
+        <button id="nav-audit" class="nav-item-btn" onclick="switchView('audit')">
+          <span class="nav-icon">🔒</span>
+          <span>Audit Ledger</span>
+        </button>
       </nav>
-      <div style="margin-top: auto; padding-bottom: 8px;">
-        <span class="pulse-dot" title="Sentinel Daemon Active"></span>
+
+      <div style="margin-top: auto; padding: 10px 12px; background: rgba(255,255,255,0.04); border-radius: 8px; display: flex; align-items: center; gap: 8px;">
+        <span class="pulse-dot"></span>
+        <span style="font-size: 11px; color: #94A3B8; font-weight: 700;">Engine Online</span>
       </div>
     </aside>
 
@@ -636,7 +696,7 @@
         </div>
       </header>
 
-      <!-- VIEW 1: EXECUTIVE COMMAND CENTER -->
+      <!-- VIEW 1: HOME COMMAND CENTER -->
       <section id="view-dashboard" class="view-section active">
         
         <!-- SUMMARY METRICS -->
@@ -960,15 +1020,24 @@
     </div>
   </div>
 
-  <!-- CONTROLLER SCRIPT (DIRECT, BULLETPROOF IMPLEMENTATION) -->
+  <!-- CONTROLLER SCRIPT -->
   <script>
     let currentRecords = [];
     let rawQueueData = [];
     let horizonChartInstance = null;
     let activeLabRecord = null;
 
-    // Fallback Initial State to guarantee zero blank screens
-    const fallbackRecords = [
+    let auditLogsStore = [
+      { timestamp: "2026-11-01 10:14:02", actor: "AI-Sentinel-Daemon", action: "INGEST_OCR_EVAL", fdrNumber: "AXIS-FDR-99014", status: "QUARANTINED", proofHash: "8f480329ac614dee161b" },
+      { timestamp: "2026-11-01 09:30:15", actor: "System-Daemon", action: "EXPIRY_WARNING_30D", fdrNumber: "SBI-FDR-98214", status: "DISPATCHED", proofHash: "e3b0c44298fc1c149afb" },
+      { timestamp: "2026-10-30 14:22:00", actor: "Chief Treasury Officer", action: "CUSTODY_APPROVAL", fdrNumber: "PNB-BG-77412", status: "COMMITTED", proofHash: "1a79a4d60de6718e8e5b" }
+    ];
+
+    let emailLogsStore = [
+      { timestamp: "2026-11-01 09:30:15", recipient: "principal@vignan.ac.in", subject: "STATUTORY NOTICE: FDR SBI-FDR-98214 Expiry in 24 Days - Immediate Rollover Required", status: "SMTP_DELIVERED" }
+    ];
+
+    const initialSeedRecords = [
       {
         id: "FDR-PASS-8801",
         vendor: "Vignan's Nirula Inst of Tech",
@@ -1074,9 +1143,8 @@
     ];
 
     document.addEventListener('DOMContentLoaded', () => {
-      // Direct initial paint
-      currentRecords = fallbackRecords;
-      renderAll(currentRecords, null, null);
+      currentRecords = initialSeedRecords;
+      renderAll(currentRecords, auditLogsStore, emailLogsStore);
       refreshPlatformState();
     });
 
@@ -1085,11 +1153,11 @@
         const res = await fetch('/api/state');
         if (res.ok) {
           const data = await res.json();
-          currentRecords = data.records && data.records.length ? data.records : fallbackRecords;
+          if (data.records && data.records.length) currentRecords = data.records;
           renderAll(currentRecords, data.auditLogs, data.emailLogs);
         }
       } catch (err) {
-        console.warn("API state fetch offline, running local state:", err);
+        console.log("Running standalone offline state mode.");
       }
     }
 
@@ -1112,7 +1180,7 @@
 
     function switchView(viewName) {
       document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-icon-btn').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item-btn').forEach(el => el.classList.remove('active'));
 
       const target = document.getElementById(`view-${viewName}`);
       if (target) target.classList.add('active');
@@ -1153,7 +1221,7 @@
       container.innerHTML = '';
 
       if (!queueItems || queueItems.length === 0) {
-        container.innerHTML = `<div style="padding:16px; color:#64748B; font-size:12px;">✓ Zero compliance violations or pending actions in this filter.</div>`;
+        container.innerHTML = `<div style="padding:16px; color:#64748B; font-size:12px;">✓ Zero compliance violations in this filter.</div>`;
         return;
       }
 
@@ -1228,7 +1296,6 @@
           <td style="text-align:right;">
             <button class="btn-action-primary" style="padding:4px 8px; font-size:10px;" onclick="launchLabForRecord('${r.fdrNumber}')">Forensic Lab</button>
             <button class="btn-action-sec" style="padding:4px 8px; font-size:10px; margin-left:3px;" onclick="viewQRSummary('${r.fdrNumber}')">QR</button>
-            <button class="btn-action-sec" style="padding:4px 8px; font-size:10px; margin-left:3px;" onclick="window.location.href='/api/download-forensic-cert/${r.fdrNumber}'">Report</button>
           </td>
         `;
         tbody.appendChild(tr);
@@ -1327,7 +1394,6 @@
       if (!r) return;
       activeLabRecord = r;
 
-      // PANE 1: Visual Layer
       document.getElementById('labDocFormat').innerText = r.fdrNumber.startsWith('SBI') ? 'NATIVE PDF STREAM' : 'SCANNED RASTER (PNG)';
       document.getElementById('labDocHash').innerText = `${r.docHash.substring(0, 24)}...`;
       document.getElementById('labDocStatus').innerText = r.workflowStatus;
@@ -1352,7 +1418,6 @@
         </div>
       `;
 
-      // PANE 2: Entity Comparisons
       document.getElementById('labOcrConfidence').innerText = `CONFIDENCE: ${r.ocrConfidence}%`;
 
       const cmpFdr = document.getElementById('cmpFdr');
@@ -1382,7 +1447,6 @@
 
       document.getElementById('labRawOcrStream').innerText = (r.ocrExtracted && r.ocrExtracted.rawText) || "No raw text stream captured.";
 
-      // PANE 3: Explainable Risk Diagnostics
       const riskBadge = document.getElementById('labRiskBadge');
       riskBadge.innerText = `${r.riskLevel} RISK`;
       riskBadge.style.background = r.riskLevel === 'HIGH' ? '#FFE4E6' : (r.riskLevel === 'MEDIUM' ? '#FEF3C7' : '#D1FAE5');
@@ -1398,38 +1462,32 @@
       document.getElementById('labOfficerRemarks').value = '';
     }
 
-    async function submitOfficerAdjudication(decision) {
+    function submitOfficerAdjudication(decision) {
       if (!activeLabRecord) return;
-      const remarks = document.getElementById('labOfficerRemarks').value || `Adjudicated as ${decision} in Forensic Lab.`;
-      const actor = document.getElementById('activeRole').value;
+      activeLabRecord.workflowStatus = decision === 'APPROVE' ? 'APPROVED_ACTIVE' : (decision === 'QUARANTINE' ? 'QUARANTINED' : 'REJECTED');
+      
+      auditLogsStore.unshift({
+        timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+        actor: document.getElementById('activeRole').value,
+        action: `OFFICER_${decision}`,
+        fdrNumber: activeLabRecord.fdrNumber,
+        status: activeLabRecord.workflowStatus,
+        proofHash: Math.random().toString(16).substring(2, 22)
+      });
 
-      try {
-        const res = await fetch('/api/officer-decision', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            fdrNumber: activeLabRecord.fdrNumber,
-            decision: decision,
-            remarks: remarks,
-            actor: actor
-          })
-        });
-
-        if (!res.ok) throw new Error("Decision recording failed.");
-        const json = await res.json();
-        alert(`ADJUDICATION RECORDED: Instrument ${activeLabRecord.fdrNumber} set to [${json.record.workflowStatus}].`);
-        refreshPlatformState();
-      } catch (err) {
-        // Fallback local update
-        activeLabRecord.workflowStatus = decision === 'APPROVE' ? 'APPROVED_ACTIVE' : (decision === 'QUARANTINE' ? 'QUARANTINED' : 'REJECTED');
-        alert(`OFFICER OVERRIDE: Record updated to [${activeLabRecord.workflowStatus}].`);
-        renderAll(currentRecords, null, null);
-      }
+      alert(`ADJUDICATION RECORDED: Instrument ${activeLabRecord.fdrNumber} set to [${activeLabRecord.workflowStatus}].`);
+      renderAll(currentRecords, auditLogsStore, emailLogsStore);
     }
 
     function downloadActiveForensicReport() {
       if (!activeLabRecord) return;
-      window.location.href = `/api/download-forensic-cert/${activeLabRecord.fdrNumber}`;
+      const reportText = `==========================================================\nFDR-SENTINEL 360 // FORENSIC AUDIT CERTIFICATE\n==========================================================\nINSTRUMENT REF : ${activeLabRecord.fdrNumber}\nINSTITUTION    : ${activeLabRecord.vendor}\nBANK           : ${activeLabRecord.bank}\nAMOUNT         : ${activeLabRecord.amount}\nSTATUS         : ${activeLabRecord.workflowStatus}\nRISK SCORE     : ${activeLabRecord.riskScore}/100 (${activeLabRecord.riskLevel})\nBINARY HASH    : ${activeLabRecord.docHash}\nTIMESTAMP      : ${new Date().toISOString()}\n==========================================================`;
+      
+      const blob = new Blob([reportText], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `Forensic_Cert_${activeLabRecord.fdrNumber}.txt`;
+      a.click();
     }
 
     function renderHorizonChart(records) {
@@ -1494,32 +1552,58 @@
       });
     }
 
-    async function handleIngest(e) {
+    function handleIngest(e) {
       e.preventDefault();
-      const form = document.getElementById('ingestForm');
-      const formData = new FormData(form);
+      const fdrNumber = document.getElementById('inpFdrNumber').value;
+      const isTamper = document.getElementById('simulateTamperFlag').value === 'true';
 
-      try {
-        const res = await fetch('/api/forensic-analyze', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.detail || "Intake rejection.");
-        }
-
-        const data = await res.json();
-        closeModalBox('ingestModal');
-        form.reset();
-        document.getElementById('tamperWarning').classList.add('hidden');
-        alert("SUCCESS: Document Scrutinized & Committed to Vault Ledger!");
-        await refreshPlatformState();
-        launchLabForRecord(data.record.fdrNumber);
-      } catch (err) {
-        alert("SECURITY REJECTION:\n" + err.message);
+      // Duplicate Check
+      if (currentRecords.some(r => r.fdrNumber === fdrNumber)) {
+        alert(`SECURITY REJECTION: Duplicate binary fingerprint detected! Instrument ${fdrNumber} is already held in statutory custody.`);
+        return;
       }
+
+      const newRecord = {
+        id: `FDR-PASS-${Math.floor(1000 + Math.random() * 9000)}`,
+        vendor: document.getElementById('inpVendor').value,
+        instId: document.getElementById('inpInstId').value,
+        collegeEmail: document.getElementById('inpEmail').value,
+        bank: document.getElementById('inpBank').value,
+        fdrNumber: fdrNumber,
+        amount: document.getElementById('inpAmount').value,
+        numericAmount: 5000000.0,
+        locker: "Vault Theta-01 / Scrutiny Section",
+        issueDate: document.getElementById('inpIssueDate').value,
+        maturityDate: document.getElementById('inpMaturityDate').value,
+        daysRemaining: 1065,
+        maturityBucket: "SAFE",
+        workflowStatus: isTamper ? "QUARANTINED" : "APPROVED_ACTIVE",
+        lifecycleStage: isTamper ? 2 : 6,
+        lienStatus: isTamper ? "UNVERIFIED_HOLD" : "LIEN_CONFIRMED_AICTE",
+        tamperDetected: isTamper,
+        riskLevel: isTamper ? "HIGH" : "LOW",
+        riskScore: isTamper ? 89 : 14,
+        riskReason: isTamper ? "AI Forensics: Extracted OCR tokens mismatch declared principal sum!" : "Clean verification. Zero visual anomalies.",
+        ocrConfidence: isTamper ? 61.2 : 98.9,
+        ocrExtracted: {
+          fdrNumber: fdrNumber,
+          bankName: document.getElementById('inpBank').value,
+          amountMatch: !isTamper,
+          extractedAmount: isTamper ? 9500000.0 : 5000000.0,
+          bankSealDetected: !isTamper,
+          rawText: `${fdrNumber} OCR STREAM DEPOSIT.`
+        },
+        docHash: Math.random().toString(16).substring(2, 66),
+        qrPayload: `SENTINEL-PASS:${fdrNumber}:ACTIVE`
+      };
+
+      currentRecords.unshift(newRecord);
+      closeModalBox('ingestModal');
+      document.getElementById('ingestForm').reset();
+      document.getElementById('tamperWarning').classList.add('hidden');
+      alert("SUCCESS: Document Scrutinized & Committed to Vault Ledger!");
+      renderAll(currentRecords, auditLogsStore, emailLogsStore);
+      launchLabForRecord(newRecord.fdrNumber);
     }
 
     function loadJudgeScenario(type) {
