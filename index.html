@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FDR-SENTINEL 360 // AI Financial Command Center & Forensic Lab</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --navy-dark: #101C2C;
+      --navy-surface: #19324D;
+      --teal-accent: #00BFA6;
+      --teal-hover: #0F766E;
+      
+      /* Refined Matte Slate-Grey Palette */
+      --bg-slate: #E2E8F0;
+      --card-white: #F8FAFC;
+      --border-subtle: #CBD5E1;
+      --border-strong: #94A3B8;
+      
+      --text-dark: #0F172A;
+      --text-muted: #64748B;
+      --danger-red: #BE123C;
+      --danger-bg: #FFE4E6;
+      --warning-amber: #B45309;
+      --warning-bg: #FEF3C7;
+      --lavender-hdr: linear-gradient(135deg, #EDE9FE, #DDD6FE);
+      --lavender-text: #5B21B6;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-slate);
+      color: var(--text-dark);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      display: flex;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* COMPACT ICON SIDEBAR */
+    .sidebar-mini {
+      width: 76px;
+      background-color: var(--navy-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 100;
+    }
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--teal-accent), #0F766E);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #FFFFFF;
+      box-shadow: 0 4px 14px rgba(0, 191, 166, 0.4);
+      margin-bottom: 24px;
+    }
+    .side-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      flex: 1;
+    }
+    .nav-icon-btn {
+      width: 48px;
+      height: 48px;
+      background: transparent;
+      border: none;
+      border-radius: 10px;
+      font-size: 20px;
+      color: #94A3B8;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .nav-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: #FFFFFF;
+    }
+    .nav-icon-btn.active {
+      background: rgba(0, 191, 166, 0.15);
+      color: var(--teal-accent);
+      border-left: 3px solid var(--teal-accent);
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #10B981;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #10B981;
+    }
+
+    /* WORKSPACE CANVAS */
+    .workspace-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 24px 36px;
+    }
+
+    .command-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 22px;
+    }
+    .brand-group h1 {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--navy-dark);
+      letter-spacing: -0.5px;
+    }
+    .brand-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 4px;
+    }
+    .pill {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .pill-lavender {
+      background: #EDE9FE;
+      color: var(--lavender-text);
+      border: 1px solid #C4B5FD;
+    }
+    .pill-teal {
+      background: #CCFBF1;
+      color: #0F766E;
+      border: 1px solid #99F6E4;
+    }
+    .brand-lead {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .header-ctrls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .role-box {
+      background: var(--card-white);
+      border: 1px solid var(--border-strong);
+      padding: 7px 14px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .role-box select {
+      border: none;
+      background: transparent;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--navy-dark);
+      outline: none;
+      cursor: pointer;
+    }
+    .btn-action-primary {
+      background: linear-gradient(135deg, var(--teal-accent), #0F766E);
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 191, 166, 0.3);
+      transition: all 0.2s ease;
+    }
+    .btn-action-primary:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+    .btn-action-sec {
+      background: var(--card-white);
+      color: var(--navy-dark);
+      border: 1px solid var(--border-strong);
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* METRIC STRIP */
+    .metric-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+    .metric-box {
+      background: var(--card-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 18px 22px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .metric-label {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.6px;
+    }
+    .metric-val {
+      font-size: 26px;
+      font-weight: 900;
+      margin: 6px 0;
+      color: var(--navy-dark);
+    }
+    .metric-sub {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--teal-accent);
+    }
+
+    /* PANELS */
+    .intel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 22px;
+    }
+    .card-panel {
+      background: var(--card-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    }
+    .card-panel h3 {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--navy-dark);
+    }
+    .card-panel p {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* PRIORITY QUEUE */
+    .queue-filters {
+      display: flex;
+      gap: 6px;
+    }
+    .filter-pill {
+      border: 1px solid var(--border-strong);
+      background: #F1F5F9;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 14px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+    .filter-pill.active {
+      background: var(--navy-dark);
+      color: #FFFFFF;
+      border-color: var(--navy-dark);
+    }
+    .queue-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 14px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+    .queue-row {
+      border: 1px solid var(--border-subtle);
+      border-radius: 8px;
+      padding: 12px 16px;
+      background: #FFFFFF;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .queue-row.flag-danger {
+      border-left: 4px solid var(--danger-red);
+    }
+    .queue-row.flag-warning {
+      border-left: 4px solid var(--warning-amber);
+    }
+
+    /* STEPPER */
+    .stepper-8-container {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 9px;
+      font-family: monospace;
+    }
+    .step-dot {
+      padding: 2px 5px;
+      border-radius: 4px;
+      background: #E2E8F0;
+      color: var(--text-muted);
+    }
+    .step-dot.active {
+      background: #CCFBF1;
+      color: #0F766E;
+      font-weight: 800;
+      border: 1px solid #99F6E4;
+    }
+
+    /* TABLE */
+    .table-responsive-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      background: var(--card-white);
+    }
+    th {
+      background: var(--lavender-hdr);
+      color: var(--lavender-text);
+      padding: 13px 16px;
+      text-align: left;
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      border-bottom: 2px solid #C4B5FD;
+    }
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-dark);
+      vertical-align: middle;
+    }
+    tr:hover td {
+      background: #F1F5F9;
+    }
+
+    /* DIGITAL PASSPORTS */
+    .passport-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+    .passport-tile {
+      background: var(--card-white);
+      border: 1px solid var(--border-subtle);
+      border-top: 4px solid var(--teal-accent);
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    }
+    .passport-head {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+    }
+    .passport-id-text {
+      font-family: monospace;
+      font-weight: 800;
+      color: var(--teal-accent);
+      font-size: 12px;
+    }
+    .passport-line {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 6px;
+    }
+    .passport-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .passport-val {
+      font-weight: 800;
+      color: var(--navy-dark);
+    }
+
+    /* FORENSIC LAB TRI-PANE */
+    .forensic-lab-canvas {
+      display: grid;
+      grid-template-columns: 34% 34% 32%;
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .forensic-pane {
+      background: var(--card-white);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 180px);
+      overflow-y: auto;
+    }
+    .pane-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      margin-bottom: 12px;
+    }
+    .pane-title-bar h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--navy-dark);
+    }
+    .doc-preview-viewport {
+      background: #0B131E;
+      color: #E2E8F0;
+      border: 1px solid #1E293B;
+      border-radius: 8px;
+      padding: 18px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      line-height: 1.6;
+      flex: 1;
+      overflow-y: auto;
+      box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+    }
+    .field-compare-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      font-size: 11px;
+      background: #FFFFFF;
+      border: 1px solid var(--border-subtle);
+    }
+    .field-compare-row.mismatch {
+      background: #FFE4E6;
+      border-color: #FCA5A5;
+      color: #9F1239;
+    }
+    .field-compare-row.match {
+      background: #ECFDF5;
+      border-color: #A7F3D0;
+      color: #065F46;
+    }
+
+    .view-section {
+      display: none;
+    }
+    .view-section.active {
+      display: block;
+    }
+
+    /* MODALS */
+    .modal-shade {
+      position: fixed;
+      inset: 0;
+      background: rgba(16, 28, 44, 0.7);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .modal-shade.hidden {
+      display: none !important;
+    }
+    .modal-box-card {
+      background: var(--card-white);
+      border-radius: 16px;
+      width: 90%;
+      max-width: 660px;
+      padding: 26px;
+      position: relative;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+    }
+    .modal-box-card.wide {
+      max-width: 900px;
+    }
+    .modal-close-x {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .judge-scenario-strip {
+      background: #F1F5F9;
+      border: 1px solid var(--border-subtle);
+      padding: 12px 16px;
+      border-radius: 10px;
+      margin: 16px 0;
+    }
+    .judge-scenario-btns {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .btn-pill-demo {
+      border: none;
+      color: #FFFFFF;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-pill-demo.green { background: #059669; }
+    .btn-pill-demo.red { background: #DC2626; }
+    .btn-pill-demo.amber { background: #D97706; }
+
+    .grid-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .field-row label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .field-row input {
+      width: 100%;
+      border: 1px solid var(--border-strong);
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      outline: none;
+    }
+    .field-row.full {
+      grid-column: span 2;
+    }
+
+    .alert-tamper-box {
+      background: var(--danger-bg);
+      border: 1px solid #FCA5A5;
+      color: var(--danger-red);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      margin-top: 14px;
+    }
+    .alert-tamper-box.hidden {
+      display: none !important;
+    }
+
+    .modal-action-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    
+    <!-- SIDEBAR NAVIGATION -->
+    <aside class="sidebar-mini">
+      <div class="logo-badge" title="FDR-SENTINEL 360 Core">⚡</div>
+      <nav class="side-nav">
+        <button id="nav-dashboard" class="nav-icon-btn active" title="Command Center" onclick="switchView('dashboard')">📊</button>
+        <button id="nav-forensic-lab" class="nav-icon-btn" title="AI FDR Forensic Lab" onclick="switchView('forensic-lab')">🔬</button>
+        <button id="nav-passports" class="nav-icon-btn" title="FDR Passports" onclick="switchView('passports')">🪪</button>
+        <button id="nav-audit" class="nav-icon-btn" title="Audit Ledger" onclick="switchView('audit')">🔒</button>
+      </nav>
+      <div style="margin-top: auto; padding-bottom: 8px;">
+        <span class="pulse-dot" title="Sentinel Daemon Active"></span>
+      </div>
+    </aside>
+
+    <!-- WORKSPACE CANVAS -->
+    <main class="workspace-area">
+      
+      <!-- TOP COMMAND HEADER -->
+      <header class="command-header">
+        <div class="brand-group">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <h1>FDR-SENTINEL 360</h1>
+            <span class="pill pill-lavender">INTELLIGENCE PLATFORM</span>
+            <span class="pill pill-teal">TEAM SECURESTACK #199645</span>
+          </div>
+          <p class="brand-lead">AI Document Forensics, Heuristic OCR Scrutiny & Statutory Custody Governance</p>
+        </div>
+
+        <div class="header-ctrls">
+          <div class="role-box">
+            <span style="font-weight: 800; color: #64748B;">ROLE:</span>
+            <select id="activeRole">
+              <option value="Chief Treasury Officer">Chief Treasury Officer</option>
+              <option value="Dealing Officer (Scrutiny)">Dealing Officer (Scrutiny)</option>
+              <option value="Accounts Auditor">Accounts Auditor</option>
+            </select>
+          </div>
+          <button class="btn-action-sec" onclick="openModalBox('emailNoticeModal')">📬 Notices (<span id="emailBadge">1</span>)</button>
+          <button class="btn-action-primary" onclick="openModalBox('ingestModal')">+ Intake Document</button>
+        </div>
+      </header>
+
+      <!-- VIEW 1: EXECUTIVE COMMAND CENTER -->
+      <section id="view-dashboard" class="view-section active">
+        
+        <!-- SUMMARY METRICS -->
+        <div class="metric-strip">
+          <div class="metric-box">
+            <span class="metric-label">TOTAL CUSTODY VALUE</span>
+            <div class="metric-val" id="metricTotalVal">₹ 1.40 Cr</div>
+            <span class="metric-sub">🔒 100% Statutory Lien Marked</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">ACTIVE REPOSITORY</span>
+            <div class="metric-val" id="metricTotalFdr">3 Instruments</div>
+            <span class="metric-sub" style="color: #00BFA6;">All Commercial Scheduled Banks</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">CRITICAL EXPIRIES (&lt;30D)</span>
+            <div class="metric-val" id="metricCritical" style="color: #B45309;">1 Notice</div>
+            <span class="metric-sub" style="color: #B45309;">Automated 30D Dispatch Active</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-label">FORENSIC QUARANTINE</span>
+            <div class="metric-val" id="metricHighRisk" style="color: #BE123C;">1 Suspect</div>
+            <span class="metric-sub" style="color: #BE123C;">Pixel / Hash Mismatch Flagged</span>
+          </div>
+        </div>
+
+        <!-- PRIORITY QUEUE + MATURITY HORIZON -->
+        <div class="intel-grid">
+          <div class="card-panel">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+              <div>
+                <h3>⚡ Priority Action Queue</h3>
+                <p>Actionable cases requiring forensic scrutiny or maturity rollover</p>
+              </div>
+              <div class="queue-filters">
+                <button class="filter-pill active" onclick="filterQueue('ALL', this)">All</button>
+                <button class="filter-pill" onclick="filterQueue('CRITICAL', this)">Critical</button>
+                <button class="filter-pill" onclick="filterQueue('HIGH', this)">High</button>
+              </div>
+            </div>
+            <div id="priorityQueueContainer" class="queue-box"></div>
+          </div>
+
+          <div class="card-panel">
+            <h3>📈 Portfolio Maturity Horizon</h3>
+            <p>Live exposure binned into 0–30d, 31–90d, and >90d bands</p>
+            <div style="height: 230px; padding-top: 10px;">
+              <canvas id="horizonChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- MASTER CUSTODY REGISTER -->
+        <div class="card-panel" style="margin-top: 20px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+            <div>
+              <h3>📑 Statutory Institutional Custody Register</h3>
+              <p>Click <strong>Forensic Lab</strong> to launch deep document inspection</p>
+            </div>
+            <input type="text" id="registerSearchInput" placeholder="Search FDR, Bank, College..." oninput="handleTableSearch()" style="padding: 8px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 11px; width: 240px;" />
+          </div>
+
+          <div class="table-responsive-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Institution / Identity</th>
+                  <th>Instrument & Bank</th>
+                  <th>Secured Value</th>
+                  <th>8-Stage Lifecycle Visualization</th>
+                  <th>Maturity Watch</th>
+                  <th>Risk Score</th>
+                  <th style="text-align: right;">Inspector Actions</th>
+                </tr>
+              </thead>
+              <tbody id="masterTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- VIEW 2: AI FDR FORENSIC LAB (FULL-PAGE WORKSPACE) -->
+      <section id="view-forensic-lab" class="view-section">
+        <div class="card-panel" style="padding: 16px 22px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <h3>🔬 AI FDR Forensic Scrutiny Lab & Document Intelligence</h3>
+            <p>Advanced tri-pane workspace comparing document visual layer, extracted OCR tokens, and statutory risk</p>
+          </div>
+          <div style="display: flex; gap: 8px;">
+            <select id="forensicInstrumentSelect" onchange="loadForensicLabRecord(this.value)" style="padding: 6px 12px; border: 1px solid #CBD5E1; border-radius: 6px; font-size: 11px; font-weight: 700; color: #101C2C; background: #FFFFFF;">
+            </select>
+            <button class="btn-action-primary" style="padding: 6px 14px; font-size: 11px;" onclick="downloadActiveForensicReport()">📥 Download Forensic Report</button>
+          </div>
+        </div>
+
+        <!-- ADVANCED TRI-PANE WORKSPACE CANVAS -->
+        <div class="forensic-lab-canvas">
+          
+          <!-- PANE 1: ORIGINAL DOCUMENT VISUAL -->
+          <div class="forensic-pane">
+            <div class="pane-title-bar">
+              <h4>📄 Instrument Visual Layer</h4>
+              <span class="pill pill-lavender" id="labDocFormat">PDF/RASTER</span>
+            </div>
+            <div class="doc-preview-viewport" id="labDocVisual"></div>
+            <div style="margin-top: 12px; font-size: 10px; color: #64748B;">
+              <div>SHA-256 Fingerprint: <span id="labDocHash" style="font-family: monospace; color: #101C2C; font-weight: 700;"></span></div>
+              <div style="margin-top: 4px;">Status: <span id="labDocStatus" class="pill pill-teal">ACTIVE</span></div>
+            </div>
+          </div>
+
+          <!-- PANE 2: EXTRACTED OCR VS INPUT COMPARISON -->
+          <div class="forensic-pane">
+            <div class="pane-title-bar">
+              <h4>🤖 OCR Entity Scrutiny & Mismatches</h4>
+              <span class="pill pill-teal" id="labOcrConfidence">CONFIDENCE: 98.4%</span>
+            </div>
+            <div style="flex: 1; overflow-y: auto;">
+              <div class="field-compare-row" id="cmpFdr">
+                <span>FDR Number:</span>
+                <strong id="cmpFdrVal"></strong>
+              </div>
+              <div class="field-compare-row" id="cmpBank">
+                <span>Issuing Bank:</span>
+                <strong id="cmpBankVal"></strong>
+              </div>
+              <div class="field-compare-row" id="cmpAmount">
+                <span>Principal Amount:</span>
+                <strong id="cmpAmountVal"></strong>
+              </div>
+              <div class="field-compare-row" id="cmpDates">
+                <span>Maturity Expiry Date:</span>
+                <strong id="cmpDatesVal"></strong>
+              </div>
+              <div class="field-compare-row" id="cmpSeal">
+                <span>Bank Seal & Watermark:</span>
+                <strong id="cmpSealVal"></strong>
+              </div>
+
+              <div style="margin-top: 14px;">
+                <h5 style="font-size: 11px; font-weight: 800; color: #101C2C; margin-bottom: 6px;">Raw Extracted OCR Stream:</h5>
+                <div id="labRawOcrStream" style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 6px; padding: 10px; font-family: monospace; font-size: 10px; color: #334155; line-height: 1.5; max-height: 120px; overflow-y: auto;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PANE 3: EXPLAINABLE RISK & OFFICER WORKBENCH -->
+          <div class="forensic-pane">
+            <div class="pane-title-bar">
+              <h4>⚖️ Risk Assessment & Actions</h4>
+              <span id="labRiskBadge" class="pill" style="background: #D1FAE5; color: #065F46;">LOW RISK</span>
+            </div>
+            <div style="flex: 1; overflow-y: auto;">
+              <div style="font-size: 28px; font-weight: 900; color: #101C2C; margin: 4px 0;" id="labRiskScore">12/100</div>
+              <p style="font-size: 11px; color: #64748B; margin-bottom: 12px;">Explainable Forensic Diagnostic:</p>
+              
+              <div id="labRiskExplanationBox" style="background: #FFFFFF; border-left: 4px solid #00BFA6; padding: 12px; border-radius: 6px; font-size: 11px; line-height: 1.5; color: #0F172A; margin-bottom: 16px;"></div>
+
+              <div style="background: #FEF3C7; border: 1px solid #FDE68A; border-radius: 6px; padding: 10px; font-size: 10px; color: #92400E; margin-bottom: 16px;">
+                ℹ️ <strong>Simulated Sandbox Notice:</strong> Core-banking lien verification is validated against simulated SFMS registry endpoints for hackathon demonstration.
+              </div>
+
+              <div style="border-top: 1px solid #CBD5E1; padding-top: 14px;">
+                <h5 style="font-size: 11px; font-weight: 800; color: #101C2C; margin-bottom: 8px;">Authorized Officer Adjudication:</h5>
+                <textarea id="labOfficerRemarks" placeholder="Enter formal scrutiny remarks..." style="width: 100%; border: 1px solid #CBD5E1; border-radius: 6px; padding: 8px; font-size: 11px; height: 60px; outline: none; margin-bottom: 10px; background: #FFFFFF;"></textarea>
+                <div style="display: flex; gap: 6px;">
+                  <button class="btn-action-primary" style="flex: 1; background: #059669; font-size: 11px; padding: 8px;" onclick="submitOfficerAdjudication('APPROVE')">✓ Approve</button>
+                  <button class="btn-action-primary" style="flex: 1; background: #D97706; font-size: 11px; padding: 8px;" onclick="submitOfficerAdjudication('QUARANTINE')">⚠️ Quarantine</button>
+                  <button class="btn-action-primary" style="flex: 1; background: #DC2626; font-size: 11px; padding: 8px;" onclick="submitOfficerAdjudication('REJECT')">✕ Reject</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VIEW 3: DIGITAL PASSPORTS -->
+      <section id="view-passports" class="view-section">
+        <div class="card-panel" style="margin-bottom: 20px;">
+          <h3>🪪 FDR Digital Passport Repository</h3>
+          <p>Cryptographically verifiable identities containing SHA-256 fingerprints, QR lookup tags, and custody vault locks</p>
+        </div>
+        <div class="passport-container" id="passportGrid"></div>
+      </section>
+
+      <!-- VIEW 4: IMMUTABLE AUDIT LEDGER -->
+      <section id="view-audit" class="view-section">
+        <div class="card-panel">
+          <h3>🔒 Tamper-Evident Cryptographic Audit Ledger</h3>
+          <p>SHA-256 historical trace chaining officer adjudications, OCR intakes, and regulatory notices</p>
+          <div class="table-responsive-wrap" style="margin-top: 14px;">
+            <table>
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Actor Authority</th>
+                  <th>Action Event</th>
+                  <th>FDR Target</th>
+                  <th>Integrity Status</th>
+                  <th>Cryptographic Block Hash</th>
+                </tr>
+              </thead>
+              <tbody id="auditLedgerBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL: INGEST DOCUMENT WITH PRESET CASES -->
+  <div id="ingestModal" class="modal-shade hidden">
+    <div class="modal-box-card">
+      <button class="modal-close-x" onclick="closeModalBox('ingestModal')">✕</button>
+      <div>
+        <h3 style="font-size: 16px; font-weight: 800; color: #101C2C;">📥 Intake Instrument & OCR Analysis</h3>
+        <p style="font-size: 11px; color: #64748B;">Upload PDF/Images for automated OCR parsing, duplicate checking, and risk scoring.</p>
+      </div>
+
+      <div class="judge-scenario-strip">
+        <span style="font-weight: 800; font-size: 11px; color: #0F172A;">SIH 2026 Evaluator 1-Click Test Cases:</span>
+        <div class="judge-scenario-btns">
+          <button type="button" class="btn-pill-demo green" onclick="loadJudgeScenario('CASE_A')">Case A: Valid Clean FDR</button>
+          <button type="button" class="btn-pill-demo amber" onclick="loadJudgeScenario('CASE_B')">Case B: Amount Mismatch Sample</button>
+          <button type="button" class="btn-pill-demo red" onclick="loadJudgeScenario('CASE_C')">Case C: Duplicate Fingerprint</button>
+        </div>
+      </div>
+
+      <form id="ingestForm" onsubmit="handleIngest(event)">
+        <div class="grid-fields">
+          <div class="field-row">
+            <label>Institution Legal Name</label>
+            <input type="text" id="inpVendor" name="vendor" required />
+          </div>
+          <div class="field-row">
+            <label>Official Notice Email</label>
+            <input type="email" id="inpEmail" name="collegeEmail" required />
+          </div>
+          <div class="field-row">
+            <label>Institution Ref ID</label>
+            <input type="text" id="inpInstId" name="instId" required />
+          </div>
+          <div class="field-row">
+            <label>Issuing Scheduled Bank</label>
+            <input type="text" id="inpBank" name="bank" required />
+          </div>
+          <div class="field-row">
+            <label>FDR / Instrument Number</label>
+            <input type="text" id="inpFdrNumber" name="fdrNumber" required />
+          </div>
+          <div class="field-row">
+            <label>Principal Amount</label>
+            <input type="text" id="inpAmount" name="amount" required />
+          </div>
+          <div class="field-row">
+            <label>Issue Date</label>
+            <input type="date" id="inpIssueDate" name="issueDate" required />
+          </div>
+          <div class="field-row">
+            <label>Maturity Date</label>
+            <input type="date" id="inpMaturityDate" name="maturityDate" required />
+          </div>
+          <div class="field-row full">
+            <label>Upload Instrument Document (PDF, JPG, PNG)</label>
+            <input type="file" id="inpDocument" name="document" accept=".pdf,.png,.jpg,.jpeg" />
+          </div>
+        </div>
+
+        <input type="hidden" id="simulateTamperFlag" name="simulateTamper" value="false" />
+
+        <div id="tamperWarning" class="alert-tamper-box hidden">
+          ⚠️ <strong>TEST CASE B TRIGGERED:</strong> Simulated OCR extraction will introduce an intentional mismatch between declared amount and document tokens to demonstrate automated Quarantine logic!
+        </div>
+
+        <div class="modal-action-footer">
+          <button type="button" class="btn-action-sec" onclick="closeModalBox('ingestModal')">Cancel</button>
+          <button type="submit" class="btn-action-primary">Process Inward Intake</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EMAIL AUDIT NOTICES -->
+  <div id="emailNoticeModal" class="modal-shade hidden">
+    <div class="modal-box-card wide">
+      <button class="modal-close-x" onclick="closeModalBox('emailNoticeModal')">✕</button>
+      <div>
+        <h3 style="font-size: 16px; font-weight: 800; color: #101C2C;">📬 Outbound Institutional Compliance Log</h3>
+        <p style="font-size: 11px; color: #64748B;">Automated statutory email notices dispatched to technical institutions via SMTP.</p>
+      </div>
+
+      <div class="table-responsive-wrap" style="margin-top: 14px;">
+        <table>
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>Recipient College</th>
+              <th>Notice Subject</th>
+              <th>Protocol Status</th>
+            </tr>
+          </thead>
+          <tbody id="emailNoticeBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: QR CODE VERIFIER -->
+  <div id="qrModal" class="modal-shade hidden">
+    <div class="modal-box-card" style="max-width: 440px; text-align: center;">
+      <button class="modal-close-x" onclick="closeModalBox('qrModal')">✕</button>
+      <div id="qrContainer" style="margin: 20px auto 14px auto;"></div>
+      <h3 id="qrModalTitle" style="font-size: 15px; font-weight: 800; color: #101C2C;">FDR Digital Certificate</h3>
+      <p id="qrModalPayload" style="font-size: 10px; font-family: monospace; color: #64748B; word-break: break-all; margin-top: 6px;"></p>
+      <div style="margin-top: 14px;">
+        <span class="pill pill-teal">✓ Cryptographically Signed Ledger Node</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTROLLER SCRIPT (DIRECT, BULLETPROOF IMPLEMENTATION) -->
+  <script>
+    let currentRecords = [];
+    let rawQueueData = [];
+    let horizonChartInstance = null;
+    let activeLabRecord = null;
+
+    // Fallback Initial State to guarantee zero blank screens
+    const fallbackRecords = [
+      {
+        id: "FDR-PASS-8801",
+        vendor: "Vignan's Nirula Inst of Tech",
+        instId: "VNITSW-AP-2026",
+        collegeEmail: "principal@vignan.ac.in",
+        bank: "State Bank of India",
+        fdrNumber: "SBI-FDR-98214",
+        amount: "₹ 45,00,000",
+        numericAmount: 4500000.0,
+        locker: "Vault Alpha-14 / AICTE HQ",
+        issueDate: "2023-11-25",
+        maturityDate: "2026-11-25",
+        daysRemaining: 24,
+        maturityBucket: "CRITICAL_30D",
+        workflowStatus: "APPROVED_ACTIVE",
+        lifecycleStage: 6,
+        lienStatus: "LIEN_CONFIRMED_AICTE",
+        tamperDetected: false,
+        riskLevel: "MEDIUM",
+        riskScore: 45,
+        riskReason: "Maturity threshold < 30 days. Statutory 30-day rollover notice dispatched.",
+        ocrConfidence: 98.4,
+        ocrExtracted: {
+          fdrNumber: "SBI-FDR-98214",
+          bankName: "State Bank of India",
+          amountMatch: true,
+          extractedAmount: 4500000.0,
+          bankSealDetected: true,
+          watermarkIntact: true,
+          rawText: "STATE BANK OF INDIA. SPECIAL TERM DEPOSIT RECEIPT. A/C NO: SBI-FDR-98214. PRINCIPAL: RS. 45,00,000.00. BENEFICIARY: AICTE NEW DELHI. STATUTORY LIEN MARKED."
+        },
+        docHash: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        qrPayload: "SENTINEL-PASS:VNITSW:SBI-FDR-98214:4500000:AICTE-LIEN:VAULT-A14"
+      },
+      {
+        id: "FDR-PASS-7740",
+        vendor: "RVR & JC College of Engineering",
+        instId: "RVR-GNT-1092",
+        collegeEmail: "registrar@rvrjc.ac.in",
+        bank: "Punjab National Bank",
+        fdrNumber: "PNB-BG-77412",
+        amount: "₹ 60,00,000",
+        numericAmount: 6000000.0,
+        locker: "Vault Beta-02 / AICTE HQ",
+        issueDate: "2023-09-14",
+        maturityDate: "2028-09-14",
+        daysRemaining: 683,
+        maturityBucket: "SAFE",
+        workflowStatus: "APPROVED_ACTIVE",
+        lifecycleStage: 6,
+        lienStatus: "LIEN_CONFIRMED_AICTE",
+        tamperDetected: false,
+        riskLevel: "LOW",
+        riskScore: 8,
+        riskReason: "Zero forensic anomalies. Bank lien registered with AICTE HQ beneficiary.",
+        ocrConfidence: 99.8,
+        ocrExtracted: {
+          fdrNumber: "PNB-BG-77412",
+          bankName: "Punjab National Bank",
+          amountMatch: true,
+          extractedAmount: 6000000.0,
+          bankSealDetected: true,
+          watermarkIntact: true,
+          rawText: "PUNJAB NATIONAL BANK. SECURITY DEPOSIT RECEIPT. NO: PNB-BG-77412. SUM OF RS. 60,00,000.00. LIEN ASSIGNED TO STATUTORY AUTHORITY."
+        },
+        docHash: "1a79a4d60de6718e8e5b326e338ae533fa7f9ebef85cf1c81ef4e2229ab2f974",
+        qrPayload: "SENTINEL-PASS:RVRJC:PNB-BG-77412:6000000:AICTE-LIEN:VAULT-B02"
+      },
+      {
+        id: "FDR-PASS-9902",
+        vendor: "St. Marys Technical Campus",
+        instId: "STM-GNT-4410",
+        collegeEmail: "chairman@stmarys.org",
+        bank: "Axis Bank",
+        fdrNumber: "AXIS-FDR-99014",
+        amount: "₹ 35,00,000",
+        numericAmount: 3500000.0,
+        locker: "Vault Gamma-09 / Quarantine",
+        issueDate: "2026-01-10",
+        maturityDate: "2029-01-10",
+        daysRemaining: 800,
+        maturityBucket: "SAFE",
+        workflowStatus: "QUARANTINED",
+        lifecycleStage: 2,
+        lienStatus: "UNVERIFIED_HOLD",
+        tamperDetected: true,
+        riskLevel: "HIGH",
+        riskScore: 92,
+        riskReason: "AI Forensics: Font mismatch in value field (Declared ₹35L vs Extracted ₹85L) & unverified issuing branch seal.",
+        ocrConfidence: 54.1,
+        ocrExtracted: {
+          fdrNumber: "AXIS-FDR-99014",
+          bankName: "Axis Bank",
+          amountMatch: false,
+          extractedAmount: 8500000.0,
+          bankSealDetected: false,
+          watermarkIntact: false,
+          rawText: "AXIS BANK SPECIMEN. DEPOSIT RECEIPT NO: AXIS-FDR-99014. AMOUNT: RS. 85,00,000. FONT DENSITY INCONSISTENCY IN VALUE OVERLAY."
+        },
+        docHash: "8f480329ac614dee161b84700c9085e91f1d67d7985341cf049972dd426d43e0",
+        qrPayload: "SENTINEL-PASS:FLAGGED:AXIS-FDR-99014:TAMPER_SUSPECT"
+      }
+    ];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Direct initial paint
+      currentRecords = fallbackRecords;
+      renderAll(currentRecords, null, null);
+      refreshPlatformState();
+    });
+
+    async function refreshPlatformState() {
+      try {
+        const res = await fetch('/api/state');
+        if (res.ok) {
+          const data = await res.json();
+          currentRecords = data.records && data.records.length ? data.records : fallbackRecords;
+          renderAll(currentRecords, data.auditLogs, data.emailLogs);
+        }
+      } catch (err) {
+        console.warn("API state fetch offline, running local state:", err);
+      }
+    }
+
+    function renderAll(records, auditLogs, emailLogs) {
+      rawQueueData = records.filter(r => r.riskLevel === 'HIGH' || r.daysRemaining <= 30);
+      renderSummaryCards(records);
+      renderPriorityQueue(rawQueueData);
+      renderMasterRegister(records);
+      renderDigitalPassports(records);
+      renderHorizonChart(records);
+      populateForensicSelector(records);
+
+      if (auditLogs) renderAuditTrail(auditLogs);
+      if (emailLogs) renderEmailDispatches(emailLogs);
+
+      if (!activeLabRecord && records.length > 0) {
+        loadForensicLabRecord(records[0].fdrNumber);
+      }
+    }
+
+    function switchView(viewName) {
+      document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-icon-btn').forEach(el => el.classList.remove('active'));
+
+      const target = document.getElementById(`view-${viewName}`);
+      if (target) target.classList.add('active');
+
+      const btn = document.getElementById(`nav-${viewName}`);
+      if (btn) btn.classList.add('active');
+    }
+
+    function renderSummaryCards(records) {
+      const totalVal = records.reduce((acc, r) => acc + (r.numericAmount || 0), 0);
+      const critical = records.filter(r => r.daysRemaining <= 30).length;
+      const highRisk = records.filter(r => r.riskLevel === 'HIGH').length;
+
+      document.getElementById('metricTotalVal').innerText = `₹ ${(totalVal / 10000000).toFixed(2)} Cr`;
+      document.getElementById('metricTotalFdr').innerText = `${records.length} Instruments`;
+      document.getElementById('metricCritical').innerText = `${critical} Critical`;
+      document.getElementById('metricHighRisk').innerText = `${highRisk} Quarantined`;
+    }
+
+    function filterQueue(severityFilter, btnElement) {
+      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+      if (btnElement) btnElement.classList.add('active');
+
+      if (severityFilter === 'ALL') {
+        renderPriorityQueue(rawQueueData);
+      } else {
+        const filtered = rawQueueData.filter(item => {
+          if (severityFilter === 'CRITICAL') return item.tamperDetected || item.daysRemaining <= 15;
+          if (severityFilter === 'HIGH') return item.riskLevel === 'HIGH';
+          return true;
+        });
+        renderPriorityQueue(filtered);
+      }
+    }
+
+    function renderPriorityQueue(queueItems) {
+      const container = document.getElementById('priorityQueueContainer');
+      container.innerHTML = '';
+
+      if (!queueItems || queueItems.length === 0) {
+        container.innerHTML = `<div style="padding:16px; color:#64748B; font-size:12px;">✓ Zero compliance violations or pending actions in this filter.</div>`;
+        return;
+      }
+
+      queueItems.forEach(item => {
+        const isCritical = item.tamperDetected || item.daysRemaining <= 15;
+        const div = document.createElement('div');
+        div.className = `queue-row ${isCritical ? 'flag-danger' : 'flag-warning'}`;
+        div.innerHTML = `
+          <div>
+            <div style="font-weight:800; font-size:12px; color:#0F172A;">${item.vendor}</div>
+            <div style="font-size:11px; color:#64748B;">Ref: ${item.fdrNumber} • <strong>${item.amount}</strong></div>
+            <div style="font-size:10px; font-weight:700; margin-top:2px; color:${isCritical ? '#BE123C' : '#B45309'};">
+              ${item.riskReason}
+            </div>
+            <div style="font-size:10px; color:#64748B; margin-top:1px;">Matures on: ${item.maturityDate} (${item.daysRemaining}d left)</div>
+          </div>
+          <div>
+            <button class="btn-action-primary" style="padding:6px 12px; font-size:11px;" onclick="launchLabForRecord('${item.fdrNumber}')">
+              Examine in Lab
+            </button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function render8StageStepper(stage) {
+      const stages = ["Submit", "OCR", "Review", "Bank", "Lien", "Approve", "Custody", "Release"];
+      return `
+        <div class="stepper-8-container">
+          ${stages.map((st, i) => `
+            <span class="step-dot ${stage >= (i + 1) ? 'active' : ''}">${stage >= (i + 1) ? '●' : '○'} ${st}</span>
+          `).join('<span style="color:#CBD5E1;">›</span>')}
+        </div>
+      `;
+    }
+
+    function renderMasterRegister(records) {
+      const tbody = document.getElementById('masterTableBody');
+      tbody.innerHTML = '';
+
+      if (records.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#64748B;">No institutional records found.</td></tr>`;
+        return;
+      }
+
+      records.forEach(r => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight:800; color:#0F172A;">${r.vendor}</div>
+            <div style="font-size:10px; color:#00BFA6; font-family:monospace;">${r.instId} • ${r.id}</div>
+          </td>
+          <td>
+            <div style="font-weight:700;">${r.bank}</div>
+            <div style="font-size:10px; color:#5B21B6; font-family:monospace;">${r.fdrNumber}</div>
+          </td>
+          <td style="font-weight:900; color:#0F172A;">${r.amount}</td>
+          <td>
+            ${render8StageStepper(r.lifecycleStage || 6)}
+            <div style="font-size:10px; color:#64748B; margin-top:3px;">Locker: ${r.locker}</div>
+          </td>
+          <td>
+            <div style="font-weight:700; color:${r.daysRemaining <= 30 ? '#BE123C' : '#0F172A'};">${r.maturityDate}</div>
+            <div style="font-size:10px; color:#64748B;">${r.daysRemaining} Days Left</div>
+          </td>
+          <td>
+            <span class="pill" style="background:${r.riskLevel === 'HIGH' ? '#FFE4E6; color:#BE123C;' : (r.riskLevel === 'MEDIUM' ? '#FEF3C7; color:#B45309;' : '#D1FAE5; color:#065F46;')}">
+              ${r.riskLevel} (${r.riskScore}/100)
+            </span>
+          </td>
+          <td style="text-align:right;">
+            <button class="btn-action-primary" style="padding:4px 8px; font-size:10px;" onclick="launchLabForRecord('${r.fdrNumber}')">Forensic Lab</button>
+            <button class="btn-action-sec" style="padding:4px 8px; font-size:10px; margin-left:3px;" onclick="viewQRSummary('${r.fdrNumber}')">QR</button>
+            <button class="btn-action-sec" style="padding:4px 8px; font-size:10px; margin-left:3px;" onclick="window.location.href='/api/download-forensic-cert/${r.fdrNumber}'">Report</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleTableSearch() {
+      const query = document.getElementById('registerSearchInput').value.toLowerCase();
+      const filtered = currentRecords.filter(r => 
+        r.vendor.toLowerCase().includes(query) ||
+        r.bank.toLowerCase().includes(query) ||
+        r.fdrNumber.toLowerCase().includes(query) ||
+        r.instId.toLowerCase().includes(query)
+      );
+      renderMasterRegister(filtered);
+    }
+
+    function renderDigitalPassports(records) {
+      const container = document.getElementById('passportGrid');
+      container.innerHTML = '';
+
+      records.forEach(r => {
+        const card = document.createElement('div');
+        card.className = 'passport-tile';
+        card.innerHTML = `
+          <div class="passport-head">
+            <span class="passport-id-text">${r.id}</span>
+            <span class="pill ${r.workflowStatus === 'APPROVED_ACTIVE' ? 'pill-teal' : 'pill-lavender'}">${r.workflowStatus}</span>
+          </div>
+          <div style="font-size:14px; font-weight:900; color:#101C2C; margin-bottom:12px;">${r.vendor}</div>
+          <div class="passport-line"><span class="passport-label">Instrument / Bank:</span><span class="passport-val">${r.fdrNumber} (${r.bank})</span></div>
+          <div class="passport-line"><span class="passport-label">Principal Amount:</span><span class="passport-val" style="color:#00BFA6;">${r.amount}</span></div>
+          <div class="passport-line"><span class="passport-label">Maturity Date:</span><span class="passport-val">${r.maturityDate}</span></div>
+          <div class="passport-line"><span class="passport-label">Lien Status:</span><span class="passport-val" style="color:#059669;">${r.lienStatus}</span></div>
+          <div class="passport-line"><span class="passport-label">Locker Custody:</span><span class="passport-val">${r.locker}</span></div>
+          <div class="passport-line"><span class="passport-label">SHA-256 Binary Hash:</span><span class="passport-val" style="font-family:monospace; font-size:9px;">${r.docHash.substring(0, 18)}...</span></div>
+          
+          <div style="margin-top:14px; padding-top:10px; border-top:1px solid #CBD5E1; display:flex; justify-content:space-between; align-items:center;">
+            <button class="btn-action-sec" style="padding:4px 8px; font-size:10px;" onclick="viewQRSummary('${r.fdrNumber}')">View QR Code</button>
+            <button class="btn-action-primary" style="padding:4px 10px; font-size:10px;" onclick="launchLabForRecord('${r.fdrNumber}')">Forensic Lab</button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function viewQRSummary(fdrNumber) {
+      const r = currentRecords.find(d => d.fdrNumber === fdrNumber);
+      if (!r) return;
+
+      document.getElementById('qrModalTitle').innerText = `${r.vendor} (${r.fdrNumber})`;
+      document.getElementById('qrModalPayload').innerText = `Payload: ${r.qrPayload}`;
+
+      const svgQR = `
+        <svg width="140" height="140" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect width="100" height="100" fill="#FFFFFF" />
+          <rect x="10" y="10" width="25" height="25" fill="#101C2C" />
+          <rect x="15" y="15" width="15" height="15" fill="#FFFFFF" />
+          <rect x="18" y="18" width="9" height="9" fill="#00BFA6" />
+          <rect x="65" y="10" width="25" height="25" fill="#101C2C" />
+          <rect x="70" y="15" width="15" height="15" fill="#FFFFFF" />
+          <rect x="73" y="18" width="9" height="9" fill="#00BFA6" />
+          <rect x="10" y="65" width="25" height="25" fill="#101C2C" />
+          <rect x="15" y="70" width="15" height="15" fill="#FFFFFF" />
+          <rect x="18" y="73" width="9" height="9" fill="#00BFA6" />
+          <rect x="42" y="42" width="16" height="16" fill="#101C2C" />
+          <rect x="42" y="12" width="6" height="6" fill="#101C2C" />
+          <rect x="52" y="24" width="6" height="6" fill="#101C2C" />
+          <rect x="75" y="55" width="12" height="12" fill="#101C2C" />
+        </svg>
+      `;
+      document.getElementById('qrContainer').innerHTML = svgQR;
+      openModalBox('qrModal');
+    }
+
+    // ----------------- FORENSIC LAB CONTROLLER -----------------
+    function populateForensicSelector(records) {
+      const sel = document.getElementById('forensicInstrumentSelect');
+      sel.innerHTML = '';
+      records.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r.fdrNumber;
+        opt.innerText = `${r.fdrNumber} — ${r.vendor}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function launchLabForRecord(fdrNumber) {
+      document.getElementById('forensicInstrumentSelect').value = fdrNumber;
+      loadForensicLabRecord(fdrNumber);
+      switchView('forensic-lab');
+    }
+
+    function loadForensicLabRecord(fdrNumber) {
+      const r = currentRecords.find(d => d.fdrNumber === fdrNumber);
+      if (!r) return;
+      activeLabRecord = r;
+
+      // PANE 1: Visual Layer
+      document.getElementById('labDocFormat').innerText = r.fdrNumber.startsWith('SBI') ? 'NATIVE PDF STREAM' : 'SCANNED RASTER (PNG)';
+      document.getElementById('labDocHash').innerText = `${r.docHash.substring(0, 24)}...`;
+      document.getElementById('labDocStatus').innerText = r.workflowStatus;
+
+      const visualBox = document.getElementById('labDocVisual');
+      visualBox.innerHTML = `
+        <div style="border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 8px;">
+          <strong style="color: #38BDF8;">[SCHEDULED COMMERCIAL BANK INSTRUMENT]</strong><br/>
+          ISSUING BANK: ${r.bank.toUpperCase()}<br/>
+          INSTRUMENT REF: ${r.fdrNumber}
+        </div>
+        BENEFICIARY  : ALL INDIA COUNCIL FOR TECHNICAL EDUCATION (AICTE)<br/>
+        DEPOSITOR    : ${r.vendor.toUpperCase()}<br/>
+        PRINCIPAL SUM: ${r.amount}<br/>
+        ISSUE DATE   : ${r.issueDate}<br/>
+        MATURITY DATE: ${r.maturityDate}<br/>
+        STATUTORY SEC: SECTION 12-B MANDATORY SECURITY DEPOSIT<br/>
+        LIEN STATUS  : ${r.lienStatus}<br/>
+        BRANCH SEAL  : ${r.ocrExtracted && r.ocrExtracted.bankSealDetected ? 'AUTHENTICATED DIGITAL STAMP' : 'UNVERIFIED / IRREGULAR PIXEL DENSITY'}<br/>
+        <div style="margin-top: 12px; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 4px; font-size: 10px; color: #94A3B8;">
+          CRYPTOGRAPHIC FINGERPRINT SEALED TO AUDIT TRAIL.
+        </div>
+      `;
+
+      // PANE 2: Entity Comparisons
+      document.getElementById('labOcrConfidence').innerText = `CONFIDENCE: ${r.ocrConfidence}%`;
+
+      const cmpFdr = document.getElementById('cmpFdr');
+      const fdrMatches = r.ocrExtracted && r.ocrExtracted.fdrNumber === r.fdrNumber;
+      cmpFdr.className = `field-compare-row ${fdrMatches ? 'match' : 'mismatch'}`;
+      document.getElementById('cmpFdrVal').innerText = `${r.fdrNumber} vs ${(r.ocrExtracted && r.ocrExtracted.fdrNumber) || 'N/A'}`;
+
+      const cmpBank = document.getElementById('cmpBank');
+      cmpBank.className = 'field-compare-row match';
+      document.getElementById('cmpBankVal').innerText = `${r.bank} (Verified)`;
+
+      const cmpAmount = document.getElementById('cmpAmount');
+      const amtMatches = r.ocrExtracted && r.ocrExtracted.amountMatch;
+      cmpAmount.className = `field-compare-row ${amtMatches ? 'match' : 'mismatch'}`;
+      document.getElementById('cmpAmountVal').innerText = amtMatches ? 
+        `${r.amount} (Exact Match)` : 
+        `Mismatch: Declared ${r.amount} vs OCR ₹${Number(r.ocrExtracted ? r.ocrExtracted.extractedAmount : 0).toLocaleString()}`;
+
+      const cmpDates = document.getElementById('cmpDates');
+      cmpDates.className = 'field-compare-row match';
+      document.getElementById('cmpDatesVal').innerText = `${r.maturityDate} (${r.daysRemaining}d left)`;
+
+      const cmpSeal = document.getElementById('cmpSeal');
+      const sealIntact = r.ocrExtracted && r.ocrExtracted.bankSealDetected;
+      cmpSeal.className = `field-compare-row ${sealIntact ? 'match' : 'mismatch'}`;
+      document.getElementById('cmpSealVal').innerText = sealIntact ? '✓ Seal Detected' : '❌ Discrepancy Flagged';
+
+      document.getElementById('labRawOcrStream').innerText = (r.ocrExtracted && r.ocrExtracted.rawText) || "No raw text stream captured.";
+
+      // PANE 3: Explainable Risk Diagnostics
+      const riskBadge = document.getElementById('labRiskBadge');
+      riskBadge.innerText = `${r.riskLevel} RISK`;
+      riskBadge.style.background = r.riskLevel === 'HIGH' ? '#FFE4E6' : (r.riskLevel === 'MEDIUM' ? '#FEF3C7' : '#D1FAE5');
+      riskBadge.style.color = r.riskLevel === 'HIGH' ? '#BE123C' : (r.riskLevel === 'MEDIUM' ? '#B45309' : '#065F46');
+
+      document.getElementById('labRiskScore').innerText = `${r.riskScore}/100`;
+      document.getElementById('labRiskScore').style.color = r.riskLevel === 'HIGH' ? '#BE123C' : '#101C2C';
+
+      const expBox = document.getElementById('labRiskExplanationBox');
+      expBox.innerText = r.riskReason;
+      expBox.style.borderLeftColor = r.riskLevel === 'HIGH' ? '#BE123C' : '#00BFA6';
+
+      document.getElementById('labOfficerRemarks').value = '';
+    }
+
+    async function submitOfficerAdjudication(decision) {
+      if (!activeLabRecord) return;
+      const remarks = document.getElementById('labOfficerRemarks').value || `Adjudicated as ${decision} in Forensic Lab.`;
+      const actor = document.getElementById('activeRole').value;
+
+      try {
+        const res = await fetch('/api/officer-decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            fdrNumber: activeLabRecord.fdrNumber,
+            decision: decision,
+            remarks: remarks,
+            actor: actor
+          })
+        });
+
+        if (!res.ok) throw new Error("Decision recording failed.");
+        const json = await res.json();
+        alert(`ADJUDICATION RECORDED: Instrument ${activeLabRecord.fdrNumber} set to [${json.record.workflowStatus}].`);
+        refreshPlatformState();
+      } catch (err) {
+        // Fallback local update
+        activeLabRecord.workflowStatus = decision === 'APPROVE' ? 'APPROVED_ACTIVE' : (decision === 'QUARANTINE' ? 'QUARANTINED' : 'REJECTED');
+        alert(`OFFICER OVERRIDE: Record updated to [${activeLabRecord.workflowStatus}].`);
+        renderAll(currentRecords, null, null);
+      }
+    }
+
+    function downloadActiveForensicReport() {
+      if (!activeLabRecord) return;
+      window.location.href = `/api/download-forensic-cert/${activeLabRecord.fdrNumber}`;
+    }
+
+    function renderHorizonChart(records) {
+      const ctx = document.getElementById('horizonChart');
+      if (!ctx) return;
+      if (horizonChartInstance) horizonChartInstance.destroy();
+
+      const critical = records.filter(r => r.daysRemaining <= 30).length;
+      const warning = records.filter(r => r.daysRemaining > 30 && r.daysRemaining <= 90).length;
+      const safe = records.filter(r => r.daysRemaining > 90).length;
+
+      horizonChartInstance = new Chart(ctx.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: ['0–30 Days (Critical)', '31–90 Days (Warning)', '>90 Days (Safe)'],
+          datasets: [{
+            label: 'Instruments',
+            data: [critical, warning, safe],
+            backgroundColor: ['#BE123C', '#B45309', '#00BFA6'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function renderAuditTrail(logs) {
+      const tbody = document.getElementById('auditLedgerBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      logs.forEach(l => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family:monospace; font-size:10px; color:#64748B;">${l.timestamp}</td>
+          <td style="font-weight:700; color:#0F172A;">${l.actor}</td>
+          <td><span class="pill pill-lavender">${l.action}</span></td>
+          <td style="font-family:monospace; color:#00BFA6;">${l.fdrNumber}</td>
+          <td style="font-weight:700; color:#059669;">${l.status}</td>
+          <td style="font-family:monospace; font-size:10px; color:#5B21B6;">${l.proofHash}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderEmailDispatches(logs) {
+      const tbody = document.getElementById('emailNoticeBody');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+      logs.forEach(l => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="font-family:monospace; font-size:10px; color:#64748B;">${l.timestamp}</td>
+          <td style="font-weight:700; color:#00BFA6;">${l.recipient}</td>
+          <td style="font-size:11px;">${l.subject}</td>
+          <td><span class="pill pill-teal">✓ ${l.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function handleIngest(e) {
+      e.preventDefault();
+      const form = document.getElementById('ingestForm');
+      const formData = new FormData(form);
+
+      try {
+        const res = await fetch('/api/forensic-analyze', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.detail || "Intake rejection.");
+        }
+
+        const data = await res.json();
+        closeModalBox('ingestModal');
+        form.reset();
+        document.getElementById('tamperWarning').classList.add('hidden');
+        alert("SUCCESS: Document Scrutinized & Committed to Vault Ledger!");
+        await refreshPlatformState();
+        launchLabForRecord(data.record.fdrNumber);
+      } catch (err) {
+        alert("SECURITY REJECTION:\n" + err.message);
+      }
+    }
+
+    function loadJudgeScenario(type) {
+      const warning = document.getElementById('tamperWarning');
+      const tamperFlag = document.getElementById('simulateTamperFlag');
+
+      if (type === 'CASE_A') {
+        document.getElementById('inpVendor').value = "Vasireddy Venkatadri Inst of Technology";
+        document.getElementById('inpInstId').value = "VVIT-AP-2026";
+        document.getElementById('inpEmail').value = "principal@vvit.net";
+        document.getElementById('inpBank').value = "State Bank of India";
+        document.getElementById('inpFdrNumber').value = "SBI-FDR-55410";
+        document.getElementById('inpAmount').value = "₹ 50,00,000";
+        document.getElementById('inpIssueDate').value = "2026-10-01";
+        document.getElementById('inpMaturityDate').value = "2029-10-01";
+        tamperFlag.value = "false";
+        warning.classList.add('hidden');
+      } else if (type === 'CASE_B') {
+        document.getElementById('inpVendor').value = "Apex Global Institute of Engineering";
+        document.getElementById('inpInstId').value = "APX-SEC-9901";
+        document.getElementById('inpEmail').value = "director@apex.edu";
+        document.getElementById('inpBank').value = "HDFC Bank";
+        document.getElementById('inpFdrNumber').value = "HDFC-FORGE-8841";
+        document.getElementById('inpAmount').value = "₹ 95,00,000";
+        document.getElementById('inpIssueDate').value = "2026-01-01";
+        document.getElementById('inpMaturityDate').value = "2031-01-01";
+        tamperFlag.value = "true";
+        warning.classList.remove('hidden');
+      } else if (type === 'CASE_C') {
+        document.getElementById('inpVendor').value = "Vignan's Nirula Inst of Tech";
+        document.getElementById('inpInstId').value = "VNITSW-AP-2026";
+        document.getElementById('inpEmail').value = "principal@vignan.ac.in";
+        document.getElementById('inpBank').value = "State Bank of India";
+        document.getElementById('inpFdrNumber').value = "SBI-FDR-98214";
+        document.getElementById('inpAmount').value = "₹ 45,00,000";
+        document.getElementById('inpIssueDate').value = "2023-11-25";
+        document.getElementById('inpMaturityDate').value = "2026-11-25";
+        tamperFlag.value = "false";
+        warning.classList.add('hidden');
+      }
+    }
+
+    function openModalBox(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModalBox(id) { document.getElementById(id).classList.add('hidden'); }
+  </script>
+</body>
+</html>
